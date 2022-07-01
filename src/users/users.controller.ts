@@ -1,9 +1,9 @@
 import {
     Body,
-    Controller,
+    Controller, Delete,
     Get,
     NotFoundException,
-    Param,
+    Param, Patch,
     Post,
     Req,
     Request,
@@ -23,6 +23,7 @@ import {BanUserDto} from "./dto/ban-user.dto";
 import {ValidationPipe} from "../pipes/validation.pipe";
 import { request } from "express";
 import { JwtService } from "@nestjs/jwt";
+import {UpdateUserDto} from "./dto/update-user.dto";
 
 @ApiTags('Users')
 @Controller('/api/users')
@@ -54,6 +55,33 @@ export class UsersController {
     @Get('/:email')
     getByEmail(@Param('email') email: string) {
         return this.usersService.getUserByEmail(email);
+    }
+
+    @ApiOperation({summary: 'Find user by role'})
+    @ApiResponse({status: 200})
+    @Roles("System Owner","Broker")
+    @UseGuards(RolesGuard)
+    @Get('/role/:value')
+    getByRole(@Param('value') value: string) {
+        return this.usersService.getUserByRole(value);
+    }
+
+    @ApiOperation({summary: 'Find user by terminal'})
+    @ApiResponse({status: 200})
+    @Roles("System Owner","Broker")
+    @UseGuards(RolesGuard)
+    @Get('/terminal/:terminal')
+    getByTerminal(@Param('terminal') terminal: string) {
+        return this.usersService.getUserByTerminal(terminal);
+    }
+
+    @ApiOperation({summary: 'Find user by supervisor'})
+    @ApiResponse({status: 200})
+    @Roles("System Owner","Broker")
+    @UseGuards(RolesGuard)
+    @Get('supervisor/:supervisor')
+    getBySypervisor(@Param('supervisor') supervisor: string) {
+        return this.usersService.getUserBySypervisor(supervisor);
     }
 
     @ApiOperation({summary: 'Find user by id'})
@@ -88,14 +116,24 @@ export class UsersController {
         return this.usersService.ban(dto);
     }
 
-    @ApiOperation({ summary: "Get me" })
+    @ApiOperation({summary: 'Update user'})
     @ApiResponse({status: 200})
-    @Roles("Broker")
+    @Roles("System Owner")
     @UseGuards(RolesGuard)
-    @Get("/me")
-    findMe(ctx) {
-        const user = this.usersService.getMe()
-        return user
+    @Patch('/:id')
+    update(@Param() id: number,@Body() dto: UpdateUserDto) {
+        const user = this.usersService.update(id,dto);
+        const userUpdated = this.usersService.findOne(id)
+        return userUpdated
+    }
+
+    @ApiOperation({summary: 'Delete user'})
+    @ApiResponse({status: 200})
+    @Roles("System Owner")
+    @UseGuards(RolesGuard)
+    @Delete('/:id')
+    delete(@Param() id: number) {
+        const user = this.usersService.delete(id);
     }
 
 }
