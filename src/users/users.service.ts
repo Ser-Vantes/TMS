@@ -17,7 +17,8 @@ export class UsersService {
 
     constructor(@InjectModel(User) private userRepository: typeof User,
                 private roleService: RolesService,
-                private fileService: FilesService) {
+                private fileService: FilesService,
+                private jwtService: JwtService) {
     }
 
     async createUser(dto: CreateUserDto,image?: any) {
@@ -137,5 +138,31 @@ export class UsersService {
         return user;
     }
 
+  async findMes(head:any) {
 
+        const authHeader = head.authorization
+        const bearer = authHeader.split(' ')[0]
+        const token = authHeader.split(' ')[1]
+
+        const user = this.jwtService.verify(token);
+        const idsUser = user.id
+        return idsUser
+    }
+
+    async updateAvatar(head:any,image:any) {
+        const fileName = await this.fileService.createFile(image)
+        const id = await this.findMes(head)
+        const user = await this.userRepository.update(
+            {
+                avatar: fileName
+            },
+            {
+                where: {id},
+                returning: true
+            })
+        if (!user) {
+            throw new NotFoundException(`User ${id} not found`);
+        }
+        return user;
+    }
 }

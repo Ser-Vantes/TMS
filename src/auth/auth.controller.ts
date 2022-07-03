@@ -34,7 +34,6 @@ export class AuthController {
   @ApiOperation({ summary: "Get me" })
   @Get("/me")
   findMe(@Headers() head) {
-
     const authHeader = head.authorization
     const bearer = authHeader.split(' ')[0]
     const token = authHeader.split(' ')[1]
@@ -42,6 +41,12 @@ export class AuthController {
     const user = this.jwtService.verify(token);
     const idsUser = user.id
     return this.userService.findOne(idsUser)
+  }
+
+  @ApiOperation({ summary: "Get me" })
+  @Get("/mes")
+  findMes(@Headers() head) {
+    return this.authService.findMes(head)
   }
 
   @Post("/signup")

@@ -1,4 +1,4 @@
-import {HttpException, HttpStatus, Injectable, UnauthorizedException} from '@nestjs/common';
+import {Headers, HttpException, HttpStatus, Injectable, UnauthorizedException} from '@nestjs/common';
 import {CreateUserDto} from "../users/dto/create-user.dto";
 import {RegisterUserDto} from "../users/dto/register-user.dto";
 import {UsersService} from "../users/users.service";
@@ -68,5 +68,15 @@ export class AuthService {
             return user;
         }
         throw new UnauthorizedException({message: 'Некорректный емайл или пароль'})
+    }
+
+    async findMes(head:any) {
+        const authHeader = head.authorization
+        const bearer = authHeader.split(' ')[0]
+        const token = authHeader.split(' ')[1]
+
+        const user = this.jwtService.verify(token);
+        const idsUser = user.id
+        return idsUser
     }
 }

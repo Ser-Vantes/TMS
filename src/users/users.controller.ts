@@ -1,7 +1,7 @@
 import {
     Body,
     Controller, Delete,
-    Get,
+    Get, Headers,
     NotFoundException,
     Param, Patch,
     Post,
@@ -30,8 +30,7 @@ import {FileInterceptor} from "@nestjs/platform-express";
 @Controller('/api/users')
 export class UsersController {
 
-    constructor(private usersService: UsersService,
-                private jwtService: JwtService) {}
+    constructor(private usersService: UsersService) {}
 
     @ApiOperation({summary: 'Create user'})
     @ApiResponse({status: 200, type: User})
@@ -128,6 +127,18 @@ export class UsersController {
         const user = this.usersService.update(id,dto);
         const userUpdated = this.usersService.findOne(id)
         return userUpdated
+    }
+
+    @ApiOperation({summary: 'Update avatar user'})
+    @ApiResponse({status: 200})
+    @Roles("System Owner")
+    @UseGuards(RolesGuard)
+    @Patch('/image')
+    @UseInterceptors(FileInterceptor('avatar'))
+    updateAvatar(@Headers() head,@UploadedFile() image) {
+        const updateUserAvatar = this.usersService.updateAvatar(head,image)
+        const user = this.usersService.findMes(head)
+        return user
     }
 
     @ApiOperation({summary: 'Delete user'})
