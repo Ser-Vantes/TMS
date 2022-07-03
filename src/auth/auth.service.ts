@@ -16,10 +16,10 @@ export class AuthService {
                 private roleService: RolesService) {}
 
     async login(authDto: CreateAuthDto) {
-        const user = await this.validateUser(authDto)
-        const candidate = await this.userService.getUserByEmail(authDto.email);
-        const token = await this.generateToken(user)
-        return {token,candidate}
+        const userVal = await this.validateUser(authDto)
+        const user = await this.userService.getUserByEmail(authDto.email);
+        const token = await this.generateToken(userVal)
+        return {token,user}
     }
 
     async registration(userDto: RegisterUserDto) {

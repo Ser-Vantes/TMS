@@ -74,7 +74,7 @@ export class User extends Model<User, UserCreationAttrs> {
 
 
     @ForeignKey(() => Role)
-    @Column({type: DataType.INTEGER, allowNull: true})
+    @Column({type: DataType.INTEGER, allowNull: false})
     roleId: number
 
     @BelongsTo(() => Role )
