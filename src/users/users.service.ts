@@ -7,6 +7,7 @@ import {AddRoleDto} from "./dto/add-role.dto";
 import {BanUserDto} from "./dto/ban-user.dto";
 import {JwtService} from "@nestjs/jwt";
 import {UpdateUserDto} from "./dto/update-user.dto";
+import * as bcrypt from 'bcryptjs'
 import {where} from "sequelize";
 
 @Injectable()
@@ -18,7 +19,14 @@ export class UsersService {
     }
 
     async createUser(dto: CreateUserDto) {
-        const user = await this.userRepository.create(dto);
+        const candidate = await this.userRepository.findOne(
+            {where: {email: dto.email}}
+        );
+        if (candidate) {
+            throw new HttpException('Пользователь с таким email существует', HttpStatus.BAD_REQUEST);
+        }
+        const hashPassword = await bcrypt.hash(dto.password, 5);
+        const user = await this.userRepository.create({...dto, password: hashPassword})
         // const role = await this.roleService.getRoleByValue("Broker")
         // user.roleId = role.id
         return user;
@@ -37,8 +45,7 @@ export class UsersService {
         const user = await this.userRepository.findOne(
             {
                 where: {email},
-                include: {all: true},
-                attributes: {exclude: ['password']}
+                include: {all: true}
             },
         )
         return user;
