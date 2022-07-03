@@ -4,11 +4,10 @@ import { UsersService } from './users.service';
 import {SequelizeModule} from "@nestjs/sequelize";
 import {User} from "./users.model";
 import {Role} from "../roles/roles.model";
-// import {UserRoles} from "../roles/user-roles.model";
 import {RolesModule} from "../roles/roles.module";
 import {AuthModule} from "../auth/auth.module";
 import {JobPosition} from "../jobPosition/jobPosition.model";
-import { JwtModule } from "@nestjs/jwt";
+import {FilesModule} from "../files/files.module";
 
 @Module({
   controllers: [UsersController],
@@ -16,12 +15,7 @@ import { JwtModule } from "@nestjs/jwt";
   imports: [
       SequelizeModule.forFeature([User, Role, JobPosition]),
       RolesModule,
-    JwtModule.register({
-      secret: process.env.PRIVATE_KEY || 'SECRET',
-      signOptions: {
-        expiresIn: '24h'
-      }
-    }),
+      FilesModule,
       forwardRef(() => AuthModule),
   ],
     exports: [

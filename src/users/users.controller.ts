@@ -7,8 +7,8 @@ import {
     Post,
     Req,
     Request,
-    Res,
-    UseGuards,
+    Res, UploadedFile, UploadedFiles,
+    UseGuards, UseInterceptors,
     UsePipes
 } from "@nestjs/common";
 import {CreateUserDto} from "./dto/create-user.dto";
@@ -24,6 +24,7 @@ import {ValidationPipe} from "../pipes/validation.pipe";
 import { request } from "express";
 import { JwtService } from "@nestjs/jwt";
 import {UpdateUserDto} from "./dto/update-user.dto";
+import {FileInterceptor} from "@nestjs/platform-express";
 
 @ApiTags('Users')
 @Controller('/api/users')
@@ -35,8 +36,10 @@ export class UsersController {
     @ApiOperation({summary: 'Create user'})
     @ApiResponse({status: 200, type: User})
     @Post()
-    create(@Body() userDto: CreateUserDto) {
-        return this.usersService.createUser(userDto);
+    @UseInterceptors(FileInterceptor('image'))
+    create(@Body() userDto: CreateUserDto,
+           @UploadedFile() image) {
+        return this.usersService.createUser(userDto,image);
     }
 
     @ApiOperation({summary: 'Get all users'})

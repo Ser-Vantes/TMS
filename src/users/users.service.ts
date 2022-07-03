@@ -10,24 +10,26 @@ import {UpdateUserDto} from "./dto/update-user.dto";
 import * as bcrypt from 'bcryptjs'
 import {where} from "sequelize";
 import {JobPosition} from "../jobPosition/jobPosition.model";
+import {FilesService} from "../files/files.service";
 
 @Injectable()
 export class UsersService {
 
     constructor(@InjectModel(User) private userRepository: typeof User,
                 private roleService: RolesService,
-                private jwtService: JwtService,) {
+                private fileService: FilesService) {
     }
 
-    async createUser(dto: CreateUserDto) {
+    async createUser(dto: CreateUserDto,image?: any) {
         const candidate = await this.userRepository.findOne(
             {where: {email: dto.email}}
         );
         if (candidate) {
             throw new HttpException('Пользователь с таким email существует', HttpStatus.BAD_REQUEST);
         }
+        const fileName = await this.fileService.createFile(image)
         const hashPassword = await bcrypt.hash(dto.password, 5);
-        const user = await this.userRepository.create({...dto, password: hashPassword})
+        const user = await this.userRepository.create({...dto, password: hashPassword, avatar: fileName})
         return user;
     }
 
