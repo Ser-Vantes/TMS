@@ -27,10 +27,17 @@ export class UsersService {
         if (candidate) {
             throw new HttpException('Пользователь с таким email существует', HttpStatus.BAD_REQUEST);
         }
-        const fileName = await this.fileService.createFile(image)
-        const hashPassword = await bcrypt.hash(dto.password, 5);
-        const user = await this.userRepository.create({...dto, password: hashPassword, avatar: fileName})
-        return user;
+            if (typeof image !== 'undefined') {
+                const fileName = await this.fileService.createFile(image)
+                const hashPassword = await bcrypt.hash(dto.password, 5);
+                const user = await this.userRepository.create({...dto, password: hashPassword, avatar: fileName})
+                return user;
+            }else{
+                const hashPassword = await bcrypt.hash(dto.password, 5);
+                const user = await this.userRepository.create({...dto, password: hashPassword, avatar: ''})
+                return user;
+            }
+
     }
 
     async getAllUsers() {
