@@ -36,7 +36,7 @@ export class UsersController {
     @ApiOperation({summary: 'Create user'})
     @ApiResponse({status: 200, type: User})
     @Post()
-    @UseInterceptors(FileInterceptor('image'))
+    @UseInterceptors(FileInterceptor('avatar'))
     create(@Body() userDto: CreateUserDto,
            @UploadedFile() image) {
         return this.usersService.createUser(userDto,image);
