@@ -27,7 +27,7 @@ export class UsersService {
         }
         const hashPassword = await bcrypt.hash(dto.password, 5);
         const user = await this.userRepository.create({...dto, password: hashPassword})
-        return HttpStatus.CREATED;
+        return user;
     }
 
     async getAllUsers() {
