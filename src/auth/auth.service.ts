@@ -17,8 +17,28 @@ export class AuthService {
 
     async login(authDto: CreateAuthDto) {
         const userVal = await this.validateUser(authDto)
-        const user = await this.userService.getUserByEmail(authDto.email);
+        const users = await this.userService.getUserByEmail(authDto.email);
         const token = await this.generateToken(userVal)
+        const roles = await this.roleService.findRoleById(users.roleId)
+        const user = {
+            email: users.email,
+            password: users.password,
+            roleValue: roles.value,
+            firstName: users.firstName,
+            lastName: users.lastName,
+            avatar: users.avatar,
+            workingFirstName: users.workingFirstName,
+            workingLastName: users.workingLastName,
+            terminal: users.terminal,
+            supervisor: users.supervisor,
+            dateOfBirth: users.dateOfBirth,
+            hiringDate: users.hiringDate,
+            accountJonesMotor: users.accountJonesMotor,
+            accountGreatWide: users.accountGreatWide,
+            linehaulBroker: users.linehaulBroker,
+            linehaulDriver: users.linehaulDriver,
+            jobPosition: users.jobPosition
+        }
         return {token,user}
     }
 

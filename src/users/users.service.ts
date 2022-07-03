@@ -9,6 +9,7 @@ import {JwtService} from "@nestjs/jwt";
 import {UpdateUserDto} from "./dto/update-user.dto";
 import * as bcrypt from 'bcryptjs'
 import {where} from "sequelize";
+import {JobPosition} from "../jobPosition/jobPosition.model";
 
 @Injectable()
 export class UsersService {
@@ -43,7 +44,7 @@ export class UsersService {
         const user = await this.userRepository.findOne(
             {
                 where: {email},
-                include: {all: true}
+                include: JobPosition
             },
         )
         return user;
