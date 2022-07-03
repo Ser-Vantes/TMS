@@ -70,7 +70,7 @@ export class UsersService {
 
     async getUserByRole(value: string) {
         const role = await this.roleService.getRoleByValue(value);
-        const user = await this.userRepository.findOne({
+        const user = await this.userRepository.findAll({
             where: {roleId: role.id},
             include: {all: true},
             attributes: {exclude: ['password']}
@@ -79,7 +79,7 @@ export class UsersService {
     }
 
     async getUserByTerminal(terminal: string) {
-        const user = await this.userRepository.findOne({
+        const user = await this.userRepository.findAll({
             where: {terminal},
             include: {all: true},
             attributes: {exclude: ['password']}
@@ -88,7 +88,7 @@ export class UsersService {
     }
 
     async getUserBySypervisor(supervisor: string) {
-        const user = await this.userRepository.findOne({
+        const user = await this.userRepository.findAll({
             where: {supervisor},
             include: {all: true},
             attributes: {exclude: ['password']}
