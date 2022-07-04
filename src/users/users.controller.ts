@@ -123,7 +123,7 @@ export class UsersController {
     @Roles("System Owner")
     @UseGuards(RolesGuard)
     @Patch('/:id')
-    update(@Param() id: number,@Body() dto: UpdateUserDto) {
+    update(@Param('id') id: number,@Body() dto: UpdateUserDto) {
         const user = this.usersService.update(id,dto);
         const userUpdated = this.usersService.findOne(id)
         return userUpdated
@@ -131,14 +131,14 @@ export class UsersController {
 
     @ApiOperation({summary: 'Update avatar user'})
     @ApiResponse({status: 200})
-    @Roles("System Owner")
+    @Roles("Broker")
     @UseGuards(RolesGuard)
-    @Patch('/image')
+    @Patch('/avatar/:id')
     @UseInterceptors(FileInterceptor('avatar'))
-    updateAvatar(@Headers() head,@UploadedFile() image) {
-        const updateUserAvatar = this.usersService.updateAvatar(head,image)
-        const user = this.usersService.findMes(head)
-        return user
+    updateAvatar(@Param('id') id:number,@UploadedFile() avatar:any) {
+        const updateUserAvatar = this.usersService.updateAvatar(id,avatar)
+        const userUpdated = this.usersService.findOne(id)
+        return userUpdated
     }
 
     @ApiOperation({summary: 'Delete user'})

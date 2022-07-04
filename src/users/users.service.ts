@@ -149,16 +149,15 @@ export class UsersService {
         return idsUser
     }
 
-    async updateAvatar(head:any,image:any) {
-        const fileName = await this.fileService.createFile(image)
-        const id = await this.findMes(head)
+    async updateAvatar(id:number,avatar: any) {
+        const fileName = await this.fileService.createFile(avatar)
+        console.log(typeof fileName)
         const user = await this.userRepository.update(
             {
                 avatar: fileName
             },
             {
-                where: {id},
-                returning: true
+                where: {id: id},
             })
         if (!user) {
             throw new NotFoundException(`User ${id} not found`);
