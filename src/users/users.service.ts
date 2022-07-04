@@ -21,15 +21,15 @@ export class UsersService {
                 private jwtService: JwtService) {
     }
 
-    async createUser(dto: CreateUserDto,image?: any) {
+    async createUser(dto: CreateUserDto,avatar?: any) {
         const candidate = await this.userRepository.findOne(
             {where: {email: dto.email}}
         );
         if (candidate) {
             throw new HttpException('Пользователь с таким email существует', HttpStatus.BAD_REQUEST);
         }
-            if (typeof image !== 'undefined') {
-                const fileName = await this.fileService.createFile(image)
+            if (typeof avatar !== 'undefined') {
+                const fileName = await this.fileService.createFile(avatar)
                 const hashPassword = await bcrypt.hash(dto.password, 5);
                 const user = await this.userRepository.create({...dto, password: hashPassword, avatar: fileName})
                 return user;
@@ -42,12 +42,11 @@ export class UsersService {
     }
 
     async getAllUsers() {
-        const users = await this.userRepository.findAll(
-            {
-                include: {all: true},
-                attributes: {exclude: ['password']}
-            });
-        return users;
+        const items = await this.userRepository.findAll({
+            include: { all: true },
+            attributes: { exclude: ["password"] },
+        });
+        return { items };
     }
 
     async getUserByEmail(email: string) {
@@ -151,7 +150,6 @@ export class UsersService {
 
     async updateAvatar(id:number,avatar: any) {
         const fileName = await this.fileService.createFile(avatar)
-        console.log(typeof fileName)
         const user = await this.userRepository.update(
             {
                 avatar: fileName

@@ -37,8 +37,8 @@ export class UsersController {
     @Post()
     @UseInterceptors(FileInterceptor('avatar'))
     create(@Body() userDto: CreateUserDto,
-           @UploadedFile() image) {
-        return this.usersService.createUser(userDto,image);
+           @UploadedFile() avatar) {
+        return this.usersService.createUser(userDto,avatar);
     }
 
     @ApiOperation({summary: 'Get all users'})
@@ -135,9 +135,10 @@ export class UsersController {
     @UseGuards(RolesGuard)
     @Patch('/avatar/:id')
     @UseInterceptors(FileInterceptor('avatar'))
-    updateAvatar(@Param('id') id:number,@UploadedFile() avatar:any) {
+    updateAvatar(@Param('id') id:number,@UploadedFile() avatar:any,@Request() req) {
         const updateUserAvatar = this.usersService.updateAvatar(id,avatar)
         const userUpdated = this.usersService.findOne(id)
+        console.log(req.user)
         return userUpdated
     }
 
