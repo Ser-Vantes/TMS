@@ -15,6 +15,8 @@ import { AuthService } from "./auth.service";
 import { CreateAuthDto } from "./dto/create-auth.dto";
 import { UsersService } from "../users/users.service";
 import { JwtService } from "@nestjs/jwt";
+import { Observable } from "rxjs";
+import { AxiosResponse } from "axios";
 // import { AuthUser } from "./user.decorator";
 
 @ApiTags("Авторизация")
@@ -47,6 +49,11 @@ export class AuthController {
   @Get("/mes")
   findMes(@Headers() head) {
     return this.authService.findMes(head)
+  }
+
+  @Post("/loginTilt")
+  async create(@Body() authDto: CreateAuthDto): Promise<Observable<AxiosResponse<any>>> {
+    return await this.authService.loginTilt(authDto);
   }
 
   @Post("/signup")

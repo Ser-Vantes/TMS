@@ -13,13 +13,19 @@ import * as bcrypt from "bcryptjs";
 import { User } from "../users/users.model";
 import { CreateAuthDto } from "./dto/create-auth.dto";
 import { RolesService } from "../roles/roles.service";
+import { HttpService } from "@nestjs/axios";
+import { Observable } from "rxjs";
+import { map } from "rxjs/operators";
+import { AxiosResponse } from 'axios';
+
 
 @Injectable()
 export class AuthService {
   constructor(
     private userService: UsersService,
     private jwtService: JwtService,
-    private roleService: RolesService
+    private roleService: RolesService,
+    private httpService: HttpService
   ) {}
 
   async login(authDto: CreateAuthDto) {
@@ -98,4 +104,12 @@ export class AuthService {
     const idsUser = user.id;
     return idsUser;
   }
+
+  async loginTilt(authDto: CreateAuthDto): Promise<Observable<AxiosResponse<any>>> {
+    return this.httpService
+      .post('https://fulltilt.transportinvestments.com/index.cfm?tilt=logonattempt', authDto)
+      .pipe(map((response) => response.data));
+  }
 }
+
+

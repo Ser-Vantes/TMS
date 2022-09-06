@@ -4,6 +4,7 @@ import { AuthService } from './auth.service';
 import {UsersModule} from "../users/users.module";
 import {JwtModule} from "@nestjs/jwt";
 import { RolesModule } from "../roles/roles.module";
+import { HttpModule } from "@nestjs/axios";
 
 @Module({
   controllers: [AuthController],
@@ -16,7 +17,8 @@ import { RolesModule } from "../roles/roles.module";
           expiresIn: '24h'
         }
       }),
-    RolesModule
+    RolesModule,
+    HttpModule
   ],
     exports: [
         AuthService,
