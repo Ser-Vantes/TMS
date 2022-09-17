@@ -17,6 +17,7 @@ import { UsersService } from "../users/users.service";
 import { JwtService } from "@nestjs/jwt";
 import { Observable } from "rxjs";
 import { AxiosResponse } from "axios";
+import { LoginTiltDto } from "./dto/login-tilt.dto";
 // import { AuthUser } from "./user.decorator";
 
 @ApiTags("Авторизация")
@@ -52,8 +53,16 @@ export class AuthController {
   }
 
   @Post("/loginTilt")
-  async create(@Body() authDto: CreateAuthDto): Promise<Observable<AxiosResponse<any>>> {
-    return await this.authService.loginTilt(authDto);
+  async loginTilt(@Body() tiltDto: LoginTiltDto): Promise<Observable<AxiosResponse<any>>> {
+    return await this.authService.loginTilt(tiltDto);
+  }
+  @Post("/loginTiltForm")
+   loginTiltForm(@Body() tiltDto: LoginTiltDto) {
+    return this.authService.loginTiltForm(tiltDto);
+  }
+  @Post("/loginTiltFormAxious")
+   loginTiltFormAxious(@Body() tiltDto: LoginTiltDto): Promise<Observable<AxiosResponse<any>>>{
+    return this.authService.loginTiltAxious(tiltDto);
   }
 
   @Post("/signup")

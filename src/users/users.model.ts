@@ -95,11 +95,7 @@ export class User extends Model<User, UserCreationAttrs> {
     @Column({type: DataType.STRING, allowNull: false})
     lastName: string;
 
-    @Column({
-        type: DataType.STRING,
-        unique: true,
-        allowNull: true
-    })
+    @Column({ type: DataType.STRING, unique: true, allowNull: true })
     slug: string
 
     @ApiProperty({example: 'icon.jpeg', description: 'Avatar'})

@@ -11,7 +11,9 @@ import { JobPositionModule } from './jobPosition/jobPosition.module';
 import {JobPosition} from "./jobPosition/jobPosition.model";
 import { FilesModule } from './files/files.module';
 import {ServeStaticModule} from "@nestjs/serve-static";
+import { LoadsModule } from './loads/loads.module';
 import * as path from 'path';
+import { Loads } from "./loads/loads.model";
 
 @Module({
     controllers: [],
@@ -38,6 +40,7 @@ import * as path from 'path';
         AuthModule,
         JobPositionModule,
         FilesModule,
+        LoadsModule,
     ]
 })
 export class AppModule {}

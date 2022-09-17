@@ -12,12 +12,14 @@ import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcryptjs";
 import { User } from "../users/users.model";
 import { CreateAuthDto } from "./dto/create-auth.dto";
+import {LoginTiltDto} from "./dto/login-tilt.dto";
 import { RolesService } from "../roles/roles.service";
 import { HttpService } from "@nestjs/axios";
 import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
 import { AxiosResponse } from 'axios';
-
+import * as https from "https";
+import * as FormData from 'form-data'
 
 @Injectable()
 export class AuthService {
@@ -105,11 +107,48 @@ export class AuthService {
     return idsUser;
   }
 
-  async loginTilt(authDto: CreateAuthDto): Promise<Observable<AxiosResponse<any>>> {
+  async loginTilt(tiltDto): Promise<Observable<AxiosResponse<any>>> {
     return this.httpService
-      .post('https://fulltilt.transportinvestments.com/index.cfm?tilt=logonattempt', authDto)
+      .post('https://fulltilt.transportinvestments.com/index.cfm?tilt=logonattempt',
+        {
+          logon: tiltDto.logon,
+          Email: tiltDto.Email,
+          password: tiltDto.password
+        },
+        {
+          httpsAgent: new https.Agent({
+            rejectUnauthorized: false
+          })
+        }
+        )
       .pipe(map((response) => response.data));
   }
+
+
+   async loginTiltForm(tiltDto: LoginTiltDto){
+    return tiltDto
+  }
+
+
+  async loginTiltAxious(tiltDto: LoginTiltDto): Promise<Observable<AxiosResponse<any>>> {
+    const data = new FormData();
+    data.append('logon',  tiltDto.logon);
+    data.append('Email',  tiltDto.Email);
+    data.append('password',  tiltDto.password);
+
+    return this.httpService.post(
+      'https://fulltilt.transportinvestments.com/index.cfm?tilt=logonattempt',
+      data,
+      {
+        httpsAgent: new https.Agent({
+          rejectUnauthorized: false
+        }),
+        headers: {...data.getHeaders()}
+      }
+    ).pipe(map((response) => response.data));
+
+  }
+
 }
 
 
