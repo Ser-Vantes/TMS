@@ -124,30 +124,68 @@ export class AuthService {
       .pipe(map((response) => response.data));
   }
 
-
-   async loginTiltForm(tiltDto: LoginTiltDto){
-    return tiltDto
-  }
-
-
   async loginTiltAxious(tiltDto: LoginTiltDto): Promise<Observable<AxiosResponse<any>>> {
     const data = new FormData();
     data.append('logon',  tiltDto.logon);
     data.append('Email',  tiltDto.Email);
     data.append('password',  tiltDto.password);
 
-    return this.httpService.post(
-      'https://fulltilt.transportinvestments.com/index.cfm?tilt=logonattempt',
-      data,
+    formData.append('logon', 'Logon');
+    formData.append('Email', 'andy@emergoinc.com');
+    formData.append('password', 'Jonesmotor2022');
+    console.log(formData)
+  const data = ({
+    logon: 'Logon',
+    Email: 'andy@emergoinc.com',
+    password: 'Jonesmotor2022',
+  })
+
+    return this.httpService
+      .post(
+      'http://fulltilt.transportinvestments.com/index.cfm?tilt=logonattempt',
+        formData,
       {
         httpsAgent: new https.Agent({
           rejectUnauthorized: false
         }),
-        headers: {...data.getHeaders()}
+        headers: {
+          'content-type': 'application/x-www-form-urlencoded'
+        }
       }
-    ).pipe(map((response) => response.data));
+    ).pipe(map((response) =>
+      response.data,
+    ));
 
   }
+
+   async loginTiltRes(tiltDto?: LoginTiltDto){
+     var axios = require('axios');
+     var FormData = require('form-data');
+     var data = new FormData();
+     data.append(`logon`, 'Logon');
+     data.append('Email', 'andy@emergoinc.com');
+     data.append('password', 'Jonesmotor2022');
+
+     var config = {
+       method: 'get',
+       url: 'http://fulltilt.transportinvestments.com/index.cfm?tilt=home.main&newlogin=yes',
+       headers: {
+         'Cookie': 'USERNAME=andy%40emergoinc%2Ecom',
+         ...data.getHeaders()
+       },
+       data : data
+     };
+
+     axios(config)
+       .then(function (response) {
+         console.log(JSON.stringify(response.data));
+       })
+       .catch(function (error) {
+         console.log(error);
+       });
+  }
+
+
 
 }
 

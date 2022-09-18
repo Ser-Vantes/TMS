@@ -5,8 +5,17 @@ import { ValidationPipe } from "./pipes/validation.pipe";
 
 
 async function start() {
+  const fs = require('fs');
+  const key = fs.readFileSync("src/cert/key.pem", 'utf8');
+  const cert = fs.readFileSync("src/cert/cert.pem", 'utf8');
+
   const PORT = process.env.PORT || 5000;
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule,
+    {
+      httpsOptions: {
+        key: key,
+        cert: cert,
+      }});
   app.enableCors({
     origin: true,
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
@@ -22,8 +31,6 @@ async function start() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup("/api/docs", app, document);
-
-
 
   app.useGlobalPipes(new ValidationPipe());
 

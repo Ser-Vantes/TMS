@@ -14,8 +14,8 @@ export class LoadsService {
   }
 
   async getAllLoads() {
-const loads = await this.loadsRepository.findAll();
-return loads;
+    const loads = await this.loadsRepository.findAll();
+    return loads;
   }
 
   async updateLoads() {
