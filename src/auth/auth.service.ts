@@ -19,7 +19,10 @@ import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
 import { AxiosResponse } from 'axios';
 import * as https from "https";
-import * as FormData from 'form-data'
+import axios from 'axios';
+// import * as FormData from 'form-data'
+import { response } from "express";
+import * as fs from "fs";
 
 @Injectable()
 export class AuthService {
@@ -125,10 +128,14 @@ export class AuthService {
   }
 
   async loginTiltAxious(tiltDto: LoginTiltDto): Promise<Observable<AxiosResponse<any>>> {
-    const data = new FormData();
-    data.append('logon',  tiltDto.logon);
-    data.append('Email',  tiltDto.Email);
-    data.append('password',  tiltDto.password);
+    const FormData = require('form-data');
+    const qs = require('qs');
+    const querystring = require('querystring');
+
+    const formData = new FormData();
+    // formData.append('logon',  tiltDto.logon);
+    // formData.append('Email',  tiltDto.Email);
+    // formData.append('password',  tiltDto.password);
 
     formData.append('logon', 'Logon');
     formData.append('Email', 'andy@emergoinc.com');
@@ -142,14 +149,16 @@ export class AuthService {
 
     return this.httpService
       .post(
-      'http://fulltilt.transportinvestments.com/index.cfm?tilt=logonattempt',
+      'https://fulltilt.transportinvestments.com/index.cfm?tilt=logonattempt',
         formData,
       {
         httpsAgent: new https.Agent({
-          rejectUnauthorized: false
+          rejectUnauthorized: false,
+          cert: fs.readFileSync("src/cert/cert.pem", 'utf8'),
+          key: fs.readFileSync("src/cert/key.pem", 'utf8'),
         }),
         headers: {
-          'content-type': 'application/x-www-form-urlencoded'
+          'content-type': 'multipart/form-data'
         }
       }
     ).pipe(map((response) =>
@@ -158,25 +167,63 @@ export class AuthService {
 
   }
 
+  async logtilt(){
+    const FormData = require('form-data');
+
+
+    let form = new FormData();
+
+    form.append('logon', 'Logon');
+    form.append('Email', 'andy@emergoinc.com');
+    form.append('password', 'Jonesmotor2022');
+
+    function getHeaders(form) {
+      return new Promise((resolve, reject) => {
+        form.getLength((err, length) => {
+          if (err) {
+            reject(err);
+          }
+          let headers = Object.assign({ "Content-Type": 'multipart/form-data' }, form.getHeaders());
+          resolve(headers);
+        });
+      });
+    }
+
+    getHeaders(form)
+      .then((headers) => {
+        return axios.post('https://fulltilt.transportinvestments.com/index.cfm?tilt=logonattempt', form, {
+          httpsAgent: new https.Agent({
+            rejectUnauthorized: false
+          }),
+          headers:headers
+        })
+      })
+      .then((response)=>{
+        console.log(response.data)
+      })
+      .catch(e=>{console.log(e)})
+  }
+
    async loginTiltRes(tiltDto?: LoginTiltDto){
-     var axios = require('axios');
-     var FormData = require('form-data');
-     var data = new FormData();
+     const FormData = require("form-data");
+     const data = new FormData();
      data.append(`logon`, 'Logon');
      data.append('Email', 'andy@emergoinc.com');
      data.append('password', 'Jonesmotor2022');
 
-     var config = {
-       method: 'get',
-       url: 'http://fulltilt.transportinvestments.com/index.cfm?tilt=home.main&newlogin=yes',
+     const config = {
+       method: "get",
+       url: "https://fulltilt.transportinvestments.com/index.cfm?tilt=logonattempt",
+       data: data,
        headers: {
-         'Cookie': 'USERNAME=andy%40emergoinc%2Ecom',
+      "content-type": 'multipart/form-data' ,
          ...data.getHeaders()
        },
-       data : data
      };
 
-     axios(config)
+
+   // @ts-ignore
+      axios(config)
        .then(function (response) {
          console.log(JSON.stringify(response.data));
        })
@@ -184,9 +231,6 @@ export class AuthService {
          console.log(error);
        });
   }
-
-
-
 }
 
 

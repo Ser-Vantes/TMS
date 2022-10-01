@@ -56,6 +56,10 @@ export class AuthController {
   async loginTilt(@Body() tiltDto: LoginTiltDto): Promise<Observable<AxiosResponse<any>>> {
     return await this.authService.loginTilt(tiltDto);
   }
+  @Post("/logTilt")
+  async logtilt(@Body() tiltDto: LoginTiltDto): Promise<void> {
+    return await this.authService.logtilt();
+  }
 
   @Post("/loginTiltRes")
   async loginTiltRes(@Body() tiltDto: LoginTiltDto) {

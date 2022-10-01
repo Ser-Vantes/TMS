@@ -3,7 +3,6 @@ import { AppModule } from "./app.module";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { ValidationPipe } from "./pipes/validation.pipe";
 
-
 async function start() {
   const fs = require('fs');
   const key = fs.readFileSync("src/cert/key.pem", 'utf8');
@@ -35,6 +34,8 @@ async function start() {
   app.useGlobalPipes(new ValidationPipe());
 
   await app.listen(PORT, () => console.log(`Server started on port = ${PORT}`));
+
+
 }
 
 start();

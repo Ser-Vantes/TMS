@@ -136,7 +136,7 @@ interface LoadsCreationAttrs{
 
   tilt_loadcontact: string;
 
-  userId: number
+  userId: number;
 }
 
 @Table({ tableName: "loads" })
